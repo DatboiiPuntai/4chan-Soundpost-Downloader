@@ -4,7 +4,6 @@ import shutil
 import os
 from IPython.display import clear_output
 from moviepy.editor import *
-import pandas as pd
 
 def get_threads(board):
     json_raw = requests.get(f'https://a.4cdn.org/{board}/catalog.json')
