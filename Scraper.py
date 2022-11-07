@@ -4,7 +4,46 @@ import shutil
 import os
 from IPython.display import clear_output
 from moviepy.editor import *
-import pandas as pd
+
+def main():
+    folder_path = r"C:\Users\panta\Downloads"
+
+    board = input("What is the board you would like to search? ")
+                
+    thread_dict_list = get_threads(board)
+    for thread_dict in thread_dict_list:
+        print(thread_dict['subject'])
+        
+    search_query = input("Which thread would you like to search? ")
+    clear_output()
+
+    thread_json_object = find_thread(search_query,thread_dict_list)
+
+    soundpost_dict_list = find_soundposts_in_thread(thread_json_object)
+
+    if len(soundpost_dict_list) != 0:
+        print('Here are all the soundposts')
+        for soundpost_dict in soundpost_dict_list:
+            print(soundpost_dict['filename'])
+
+        if input('Would you like to download them all? (y/n) ').lower() == 'y':
+            for soundpost_dict in soundpost_dict_list:
+                download_file(soundpost_dict['image_id'], soundpost_dict['extension'], soundpost_dict['filename'])
+        else:
+            print('ogey buddy')
+
+        if input('Would you like to merge files? (y/n) ').lower() == 'y':
+            pair_dict_list = match_files(folder_path)
+            create_video(folder_path, pair_dict_list)
+        else:
+            print('ogey buddy')
+
+        if input('Would you like to delete original files? (y/n) ').lower() == 'y':
+            cleanup(pair_dict_list)
+        else:
+            print('ogey buddy')
+    else:
+        print('There are no soundposts in this thread.')
 
 def get_threads(board):
     json_raw = requests.get(f'https://a.4cdn.org/{board}/catalog.json')
@@ -118,45 +157,5 @@ def cleanup(pair_dict_list):
         if os.path.exists(pair['visual_clip']):
             os.remove(pair['visual_clip'])
 
-folder_path = r"C:\Users\panta\Downloads"
-
-image_file_types = {'.jpg','.png'}
-video_file_types = {'.mp4','.gif','.webm'}
-audio_file_types = {'.mp3','.ogg','.m4a','.flac', '.mp4', '.webm'}
-
-board = input("What is the board you would like to search? ")
-              
-thread_dict_list = get_threads(board)
-for thread_dict in thread_dict_list:
-    print(thread_dict['subject'])
-    
-search_query = input("Which thread would you like to search? ")
-clear_output()
-
-thread_json_object = find_thread(search_query,thread_dict_list)
-
-soundpost_dict_list = find_soundposts_in_thread(thread_json_object)
-
-if len(soundpost_dict_list) != 0:
-    print('Here are all the soundposts')
-    for soundpost_dict in soundpost_dict_list:
-        print(soundpost_dict['filename'])
-
-    if input('Would you like to download them all? (y/n) ').lower() == 'y':
-        for soundpost_dict in soundpost_dict_list:
-            download_file(soundpost_dict['image_id'], soundpost_dict['extension'], soundpost_dict['filename'])
-    else:
-        print('ogey buddy')
-
-    if input('Would you like to merge files? (y/n) ').lower() == 'y':
-        pair_dict_list = match_files(folder_path)
-        create_video(folder_path, pair_dict_list)
-    else:
-        print('ogey buddy')
-
-    if input('Would you like to delete original files? (y/n) ').lower() == 'y':
-        cleanup(pair_dict_list)
-    else:
-        print('ogey buddy')
-else:
-    print('There are no soundposts in this thread.')
+if __name__ == '__main__':
+    main()
