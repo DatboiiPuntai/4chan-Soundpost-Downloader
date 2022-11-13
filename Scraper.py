@@ -5,6 +5,8 @@ import os
 from IPython.display import clear_output
 from moviepy.editor import *
 
+folder_path = r"D:\Users\Pantai Suyasri\Documents\GitHub\4chan-Soundpost-Downloader"
+
 def get_threads(board):
     json_raw = requests.get(f'https://a.4cdn.org/{board}/catalog.json')
     json_object = json.loads(json_raw.text) 
@@ -43,8 +45,8 @@ def download_file(image_id,extension,filename):
         print('Error downloading')
 
     open(f"{filename}{extension}", "wb").write(response.content)
-    shutil.move(f"D://Programming//My Scripts//Scraper//{filename}{extension}", 
-                f"C://Users//panta//Downloads//{filename}{extension}")
+    shutil.move(filename+extension, 
+                os.path.join(folder_path,filename+extension))
 
     
     sound_file_link = (filename.split('sound=')[-1][:-1]).replace('%2F','/').replace('%3A',':')
@@ -57,8 +59,8 @@ def download_file(image_id,extension,filename):
         print('Error downloading audio')
 
     open(sound_file_link.split('/')[-1], "wb").write(response.content)
-    shutil.move(f"D://Programming//My Scripts//Scraper//{sound_file_link.split('/')[-1]}", 
-                f"C://Users//panta//Downloads//{sound_file_link.split('/')[-1]}")
+    shutil.move(sound_file_link.split('/')[-1], 
+                os.path.join(folder_path,sound_file_link.split('/')[-1]))
 
 
 
@@ -78,7 +80,7 @@ def match_files(folder_path):
 
             video_name = visual_clip.split('[')[0].replace(' ','')
 
-            isVideo = visual_clip.split('.')[-1] in video_file_types
+            isVideo = '.' + visual_clip.split('.')[-1] in video_file_types
             pair_dict_list.append({'audio_clip':audio_clip_path, 'visual_clip':visual_clip_path, 
                                    'video_name':video_name, 'isVideo':isVideo})
             visual_clip = None
@@ -117,8 +119,6 @@ def cleanup(pair_dict_list):
         if os.path.exists(pair['visual_clip']):
             os.remove(pair['visual_clip'])
 
-folder_path = r"C:\Users\panta\Downloads"
-
 image_file_types = {'.jpg','.png'}
 video_file_types = {'.mp4','.gif','.webm'}
 audio_file_types = {'.mp3','.ogg','.m4a','.flac', '.mp4', '.webm'}
@@ -149,6 +149,7 @@ if len(soundpost_dict_list) != 0:
 
     if input('Would you like to merge files? (y/n) ').lower() == 'y':
         pair_dict_list = match_files(folder_path)
+        print(pair_dict_list)
         create_video(folder_path, pair_dict_list)
     else:
         print('ogey buddy')
