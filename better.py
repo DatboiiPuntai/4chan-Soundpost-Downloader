@@ -7,7 +7,7 @@ import re
 
 
 def main():
-    inputLink = input('Input your link')
+    inputLink = input('Input your link: ')
     parsedUrl = urlparse(inputLink)
     board = parsedUrl.path.split('/')[1]
 
