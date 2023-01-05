@@ -1,13 +1,17 @@
 import requests
 import json
 import os
+import sys
 from urllib.parse import urlparse
 from moviepy.editor import *
 import re
 
 
 def main():
-    inputLink = input('Input your link: ')
+    if len(sys.argv) > 1:
+        inputLink = sys.argv[1]
+    else:
+        inputLink = input('Input your link: ')
     parsedUrl = urlparse(inputLink)
     board = parsedUrl.path.split('/')[1]
 
