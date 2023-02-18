@@ -1,2 +1,2 @@
 # 4chan-Soundpost-Downloader
-a crappy python source code script to download 4chan soundposts and merge them into mp4s
+a very goofy script to download soundposts from 4chan and merge them into a vid
